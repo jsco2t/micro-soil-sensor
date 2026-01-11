@@ -61,9 +61,38 @@ SoilSensorReading read_soil_moisture()
         Serial.println(F("WARNING: Soil sensor calibration inverted (DRY <= WET)!"));
     }
 
+    if (reading.rawValue == 0)
+    {
+        Serial.println(F("ERROR: Invalid soil sensor reading (RAW == 0)!"));
+        reading.moisturePercent = 0;
+        return reading;
+    }
+
+    if (reading.rawValue > SOIL_CONFIG_DEFAULT_DRY_VALUE)
+    {
+        Serial.print(F("WARNING: Soil sensor reading ("));
+        Serial.print(reading.rawValue);
+        Serial.println(F(") exceeds DRY calibration value"));
+        reading.rawValue = SOIL_CONFIG_DEFAULT_DRY_VALUE;
+        Serial.print(F("Clamping reading to DRY value: "));
+        Serial.println(reading.rawValue);
+    }
+    else if (reading.rawValue < SOIL_CONFIG_DEFAULT_WET_VALUE)
+    {
+        Serial.print(F("WARNING: Soil sensor reading ("));
+        Serial.print(reading.rawValue);
+        Serial.println(F(") below WET calibration value"));
+        reading.rawValue = SOIL_CONFIG_DEFAULT_WET_VALUE;
+        Serial.print(F("Clamping reading to WET value: "));
+        Serial.println(reading.rawValue);
+    }
+
     // Linear interpolation: moisture = 100 * (dry - raw) / (dry - wet)
     // Note: dry_value > wet_value (dry reads higher ADC)
     int moisture = 100 * (SOIL_CONFIG_DEFAULT_DRY_VALUE - reading.rawValue) / calibrationRange;
+    Serial.print(F("Soil Sensor Moisture: "));
+    Serial.print(moisture);
+    Serial.println(F("%"));
 
     // Clamp to 0-100%
     if (moisture < 0)

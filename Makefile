@@ -60,13 +60,13 @@ setup: ## Initialize Python virtual environment and install PlatformIO
 		$(PYTHON) -m venv $(VENV_DIR); \
 		printf "$(YELLOW)Installing PlatformIO and dependencies...$(NC)\n"; \
 		$(VENV_BIN)/pip install --upgrade pip setuptools wheel --quiet; \
-		$(VENV_BIN)/pip install platformio --quiet; \
+		$(VENV_BIN)/pip install platformio pyyaml --quiet; \
 		printf "$(GREEN)✓ Build environment created successfully$(NC)\n"; \
 	else \
 		printf "$(YELLOW)Virtual environment already exists$(NC)\n"; \
 		if [ ! -f "$(PIO)" ]; then \
 			printf "$(YELLOW)PlatformIO not found, installing...$(NC)\n"; \
-			$(VENV_BIN)/pip install --upgrade pip setuptools wheel platformio --quiet; \
+			$(VENV_BIN)/pip install --upgrade pip setuptools wheel platformio pyyaml --quiet; \
 		fi; \
 		printf "$(GREEN)✓ Build environment ready$(NC)\n"; \
 	fi
